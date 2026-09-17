@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Copier</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  background:#0b0d12;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  min-height:100vh;
+}
+
+.header{
+  padding:18px 15px;
+  background:#11141c;
+  border-bottom:1px solid #252936;
+  text-align:center;
+}
+
+.header h1{
+  font-size:23px;
+}
+
+.header p{
+  color:#8d94a5;
+  font-size:13px;
+  margin-top:5px;
+}
+
+.container{
+  width:100%;
+  max-width:1000px;
+  margin:auto;
+  padding:15px;
+}
+
+.toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+button{
+  border:0;
+  border-radius:9px;
+  padding:12px 17px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.copy{
+  background:#1677ff;
+}
+
+.select{
+  background:#343946;
+}
+
+.clear{
+  background:#d93636;
+}
+
+button:active{
+  transform:scale(.97);
+}
+
+.editor-box{
+  background:#11141c;
+  border:1px solid #292e3a;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.editor-top{
+  height:42px;
+  display:flex;
+  align-items:center;
+  padding:0 13px;
+  background:#171a23;
+  border-bottom:1px solid #292e3a;
+  color:#9da4b5;
+  font-size:13px;
+}
+
+textarea{
+  display:block;
+  width:100%;
+  min-height:65vh;
+  resize:vertical;
+  border:0;
+  outline:0;
+  background:#0e1117;
+  color:#e8ecf3;
+  padding:16px;
+  font-family:Consolas,Monaco,monospace;
+  font-size:14px;
+  line-height:1.6;
+  tab-size:2;
+}
+
+textarea::selection{
+  background:#245aa5;
+}
+
+.stats{
+  display:flex;
+  gap:20px;
+  padding:12px 2px;
+  color:#9299aa;
+  font-size:13px;
+}
+
+.status{
+  text-align:center;
+  min-height:20px;
+  color:#49d17d;
+  font-size:13px;
+  margin-top:5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>📋 Code Copier</h1>
+  <p>Paste, edit and copy large code easily</p>
+</div>
+
+<div class="container">
+
+  <div class="toolbar">
+    <button class="copy" onclick="copyCode()">📋 COPY ALL</button>
+    <button class="select" onclick="selectAllCode()">SELECT ALL</button>
+    <button class="clear" onclick="clearCode()">CLEAR</button>
+  </div>
+
+  <div class="editor-box">
+
+    <div class="editor-top">
+      CODE EDITOR
+    </div>
+
+    <textarea
+      id="code"
+      spellcheck="false"
+      placeholder="Paste your HTML, CSS, JavaScript, Python or any other code here..."
+      oninput="updateStats()"
+    ></textarea>
+
+  </div>
+
+  <div class="stats">
+    <span>Lines: <b id="lines">0</b></span>
+    <span>Characters: <b id="chars">0</b></span>
+  </div>
+
+  <div class="status" id="status"></div>
+
+</div>
+
+<script>
+
+const editor = document.getElementById("code");
+const lines = document.getElementById("lines");
+const chars = document.getElementById("chars");
+const statusText = document.getElementById("status");
+
+function updateStats(){
+
+  const text = editor.value;
+
+  chars.textContent = text.length;
+
+  if(text.length === 0){
+    lines.textContent = 0;
+  }else{
+    lines.textContent = text.split(/\r\n|\r|\n/).length;
+  }
+}
+
+async function copyCode(){
+
+  const text = editor.value;
+
+  if(!text){
+    showStatus("Nothing to copy");
+    return;
+  }
+
+  try{
+
+    await navigator.clipboard.writeText(text);
+
+    showStatus("✓ Full code copied successfully");
+
+  }catch(error){
+
+    editor.focus();
+    editor.select();
+
+    try{
+      document.execCommand("copy");
+      showStatus("✓ Full code copied successfully");
+    }catch(e){
+      showStatus("Copy failed. Please select the code manually.");
+    }
+
+  }
+
+}
+
+function selectAllCode(){
+
+  editor.focus();
+  editor.select();
+
+  showStatus("All code selected");
+}
+
+function clearCode(){
+
+  if(editor.value.length === 0){
+    return;
+  }
+
+  editor.value = "";
+
+  updateStats();
+
+  editor.focus();
+
+  showStatus("Code cleared");
+}
+
+function showStatus(message){
+
+  statusText.textContent = message;
+
+  clearTimeout(window.statusTimer);
+
+  window.statusTimer = setTimeout(function(){
+    statusText.textContent = "";
+  },2500);
+}
+
+updateStats();
+
+</script>
+
+</body>
+</html>

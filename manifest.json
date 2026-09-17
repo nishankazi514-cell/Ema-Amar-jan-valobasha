@@ -1,0 +1,10 @@
+{
+  "name": "Big Code Copier",
+  "short_name": "Code Copier",
+  "description": "Copy, split and download very large code easily.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#080a0f",
+  "theme_color": "#11151e",
+  "orientation": "portrait"
+}
