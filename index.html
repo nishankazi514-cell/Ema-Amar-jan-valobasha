@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><link rel="manifest" href="manifest.json">
   Code Copier</title>
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#11151e">
 
 <style>
 *{
@@ -263,6 +265,18 @@ updateStats();
   }
 
 </script>
-
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(function () {
+        console.log("Service Worker registered");
+      })
+      .catch(function (error) {
+        console.log("Service Worker failed:", error);
+      });
+  });
+}
+</script>
 </body>
 </html>
